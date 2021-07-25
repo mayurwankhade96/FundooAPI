@@ -1,4 +1,5 @@
-﻿using FundooAPI.Models;
+﻿using BusinessLayer.Interfaces;
+using CommonLayer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,22 +13,22 @@ namespace FundooAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        public List<User> users = new List<User>()
+        private IUserBL users;
+        public UsersController(IUserBL _user)
         {
-            new User { Id = 1, FirstName = "Mayur", LastName = "Wankhade", Email = "mayur.wankhade2@gmail.com", PhoneNumber = "8082494818"},
-            new User { Id = 2, FirstName = "Harshal", LastName = "Kadlak", Email = "hkadlak8@gmail.com", PhoneNumber = "123456789"}
-        };
+            this.users = _user;
+        }
 
         [HttpGet]
         public ActionResult<IEnumerable<User>> GetAllUsers()
         {
-            return users;
+            return users.GetAllUsers();
         }
 
         [HttpGet("{id}")]
         public ActionResult<User> GetUser(int id)
         {
-            var user = users.FirstOrDefault(x => x.Id == id);
+            var user = users.GetUser(id);
 
             if (user == null)
             {
