@@ -14,14 +14,37 @@ namespace BusinessLayer.Services
         {
             this.user = _user;
         }
+
+        //public bool DeleteUser(int id)
+        //{
+        //    user.DeleteUser(id);
+        //    return true;
+        //}
+
         public List<User> GetAllUsers()
         {
             return this.user.GetAllUsers();
         }
 
-        public User GetUser(int id)
+        //public User GetUser(int id)
+        //{
+        //    return this.user.GetUser(id);
+        //}
+
+        public User LoginUser(string email, string password)
         {
-            return this.user.GetUser(id);
+            return this.user.LoginUser(email, password);
         }
+
+        public bool RegisterNewUser(User usr)
+        {
+            user.RegisterNewUser(usr);
+            return true;
+        }
+
+        //public List<User> UpdateUser(int id, User user)
+        //{
+        //    return this.user.UpdateUser(id, user);
+        //}
     }
 }

@@ -25,16 +25,58 @@ namespace FundooAPI.Controllers
             return users.GetAllUsers();
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<User> GetUser(int id)
-        {
-            var user = users.GetUser(id);
+        //[HttpGet("{id}")]
+        //public ActionResult<User> GetUser(int id)
+        //{
+        //    var user = users.GetUser(id);
 
-            if (user == null)
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return user;
+        //}
+
+        [HttpPost]
+        public ActionResult<User> PostUser(User user)
+        {
+            if (users.RegisterNewUser(user))
             {
-                return NotFound();
+                return user;
             }
-            return user;
+            return BadRequest();
+        }
+
+        //[HttpDelete("{id}")]
+        //public ActionResult<IEnumerable<User>> DeleteUser(int id)
+        //{
+        //    if (users.DeleteUser(id))
+        //    {
+        //        return users.GetAllUsers();
+        //    }
+        //    return NotFound();
+        //}
+
+        //[HttpPut("{id}")]
+        //public ActionResult<IEnumerable<User>> UpdateUser(int id, User user)
+        //{
+        //    var uUser = users.UpdateUser(id, user);
+        //    if (uUser != null)
+        //    {
+        //        return Ok(uUser);
+        //    }
+        //    return NotFound();
+        //}
+
+        [HttpPost("login")]
+        public ActionResult<IEnumerable<User>> LoginUser(Login login)
+        {
+            var user = users.LoginUser(login.Email, login.Password);
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            return NotFound();
         }
     }
 }

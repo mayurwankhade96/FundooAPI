@@ -11,9 +11,14 @@ namespace RepositoryLayer.Services
     {
         public List<User> users = new List<User>()
         {
-            new User { Id = 1, FirstName = "Mayur", LastName = "Wankhade", Email = "mayur.wankhade2@gmail.com", PhoneNumber = "8082494818"},
-            new User { Id = 2, FirstName = "Sohail", LastName = "Qureshi", Email = "sohail123@gmail.com", PhoneNumber = "123456789"}
+            new User { Id = 1, FirstName = "Mayur", LastName = "Wankhade", Email = "mayur.wankhade2@gmail.com", Password = "789456"},
+            new User { Id = 2, FirstName = "Sohail", LastName = "Qureshi", Email = "sohail123@gmail.com", Password = "456789"}
         };
+
+        public bool DeleteUser(int id)
+        {
+            throw new NotImplementedException();
+        }
 
         public List<User> GetAllUsers()
         {
@@ -23,6 +28,22 @@ namespace RepositoryLayer.Services
         public User GetUser(int id)
         {
             return users.FirstOrDefault(x => x.Id == id);
+        }
+
+        public bool RegisterNewUser(User user)
+        {
+            users.Add(user);
+            return true;
+        }
+
+        public List<User> UpdateUser(int id, User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public User LoginUser(string email, string password)
+        {
+            throw new NotImplementedException();
         }
     }
 }
