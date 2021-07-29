@@ -21,16 +21,47 @@ namespace RepositoryLayer.Services
         {
             this._db = db;            
             this._secret = config.GetSection("AppSettings").GetSection("Key").Value;
-        }      
+        }
+        
+        /// <summary>
+        /// This method encode your password
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public string EncryptPassword(string password)
+        {
+            byte[] encData = new byte[password.Length];
+            encData = Encoding.UTF8.GetBytes(password);
+            string encodedData = Convert.ToBase64String(encData);
+            return encodedData;
+        }
+
+        /// <summary>
+        /// This method decode your password
+        /// </summary>
+        /// <param name="encodedData"></param>
+        /// <returns></returns>
+        public string DecryptPassword(string encodedData)
+        {
+            UTF8Encoding encoding = new UTF8Encoding();
+            Decoder decoder = encoding.GetDecoder();
+            byte[] toDecodeByte = Convert.FromBase64String(encodedData);
+            int charCount = decoder.GetCharCount(toDecodeByte, 0, toDecodeByte.Length);
+            char[] decodedChar = new char[charCount];
+            decoder.GetChars(toDecodeByte, 0, toDecodeByte.Length, decodedChar, 0);
+            string result = new String(decodedChar);
+            return result;
+        }
 
         public bool RegisterNewUser(User user)
-        {
+        {            
+            user.Password = EncryptPassword(user.Password);
             user.CreateDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
             user.ModifiedDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
             _db.users.Add(user);
             _db.SaveChanges();
             return true;
-        }        
+        }
 
         public LoginResponse LoginUser(string email, string password)
         {
