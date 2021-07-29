@@ -1,49 +1,68 @@
 ﻿using CommonLayer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 
 namespace RepositoryLayer.Services
 {
     public class UserRL : IUserRL
     {
-        public List<User> users = new List<User>()
-        {
-            new User { Id = 1, FirstName = "Mayur", LastName = "Wankhade", Email = "mayur.wankhade2@gmail.com", Password = "789456"},
-            new User { Id = 2, FirstName = "Sohail", LastName = "Qureshi", Email = "sohail123@gmail.com", Password = "456789"}
-        };
+        private FundooContext _db;        
+        private readonly string _secret;
 
-        public bool DeleteUser(int id)
+        public UserRL(FundooContext db, IConfiguration config)
         {
-            throw new NotImplementedException();
-        }
-
-        public List<User> GetAllUsers()
-        {
-            return users;
-        }
-
-        public User GetUser(int id)
-        {
-            return users.FirstOrDefault(x => x.Id == id);
-        }
+            this._db = db;            
+            this._secret = config.GetSection("AppSettings").GetSection("Key").Value;
+        }      
 
         public bool RegisterNewUser(User user)
         {
-            users.Add(user);
+            user.CreateDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+            user.ModifiedDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+            _db.users.Add(user);
+            _db.SaveChanges();
             return true;
-        }
+        }        
 
-        public List<User> UpdateUser(int id, User user)
+        public LoginResponse LoginUser(string email, string password)
         {
-            throw new NotImplementedException();
-        }
+            var authUser = _db.users.SingleOrDefault(x => x.Email == email && x.Password == password);
 
-        public User LoginUser(string email, string password)
-        {
-            throw new NotImplementedException();
-        }
+            if (authUser == null)
+            {
+                return null;
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Email, authUser.Email),
+                    new Claim("userId", authUser.Id.ToString(), ClaimValueTypes.Integer)
+                }),
+                Expires = DateTime.UtcNow.AddDays(2),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            LoginResponse loginResponse = new LoginResponse();
+            
+            loginResponse.Token = tokenHandler.WriteToken(token);
+            loginResponse.Id = authUser.Id;
+            loginResponse.FirstName = authUser.FirstName;
+            loginResponse.LastName = authUser.LastName;
+            loginResponse.Email = authUser.Email;
+            return loginResponse;
+        }        
     }
 }

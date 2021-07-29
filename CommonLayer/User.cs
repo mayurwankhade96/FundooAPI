@@ -16,5 +16,7 @@ namespace CommonLayer
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        public string CreateDate { get; set; }
+        public string ModifiedDate { get; set; }
     }
 }

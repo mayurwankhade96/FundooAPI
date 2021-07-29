@@ -13,70 +13,32 @@ namespace FundooAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private IUserBL users;
-        public UsersController(IUserBL _user)
+        private IUserBL _users;
+        public UsersController(IUserBL user)
         {
-            this.users = _user;
-        }
-
-        [HttpGet]
-        public ActionResult<IEnumerable<User>> GetAllUsers()
-        {
-            return users.GetAllUsers();
-        }
-
-        //[HttpGet("{id}")]
-        //public ActionResult<User> GetUser(int id)
-        //{
-        //    var user = users.GetUser(id);
-
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return user;
-        //}
+            this._users = user;
+        }                
 
         [HttpPost]
-        public ActionResult<User> PostUser(User user)
+        public ActionResult PostUser(User user)
         {
-            if (users.RegisterNewUser(user))
-            {
-                return user;
-            }
-            return BadRequest();
-        }
-
-        //[HttpDelete("{id}")]
-        //public ActionResult<IEnumerable<User>> DeleteUser(int id)
-        //{
-        //    if (users.DeleteUser(id))
-        //    {
-        //        return users.GetAllUsers();
-        //    }
-        //    return NotFound();
-        //}
-
-        //[HttpPut("{id}")]
-        //public ActionResult<IEnumerable<User>> UpdateUser(int id, User user)
-        //{
-        //    var uUser = users.UpdateUser(id, user);
-        //    if (uUser != null)
-        //    {
-        //        return Ok(uUser);
-        //    }
-        //    return NotFound();
-        //}
-
-        [HttpPost("login")]
-        public ActionResult<IEnumerable<User>> LoginUser(Login login)
-        {
-            var user = users.LoginUser(login.Email, login.Password);
-            if (user != null)
+            if (_users.RegisterNewUser(user))
             {
                 return Ok(user);
             }
-            return NotFound();
+            return BadRequest();
+        }               
+
+        [HttpPost("login")]
+        public ActionResult LoginUser(Login login)
+        {
+            var user = _users.LoginUser(login.Email, login.Password);
+
+            if (user != null)
+            {
+                return Ok(user);                                
+            }
+            return BadRequest(new { message = "Email or Password is incorrect" });
         }
     }
 }

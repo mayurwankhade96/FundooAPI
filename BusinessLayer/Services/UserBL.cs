@@ -1,50 +1,32 @@
 ﻿using BusinessLayer.Interfaces;
 using CommonLayer;
+using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace BusinessLayer.Services
 {
     public class UserBL : IUserBL
     {
-        private IUserRL user;
-        public UserBL(IUserRL _user)
+        private IUserRL _user;
+        public UserBL(IUserRL user)
         {
-            this.user = _user;
+            this._user = user;
+        }        
+
+        public LoginResponse LoginUser(string email, string password)
+        {
+            return this._user.LoginUser(email, password);
         }
 
-        //public bool DeleteUser(int id)
-        //{
-        //    user.DeleteUser(id);
-        //    return true;
-        //}
-
-        public List<User> GetAllUsers()
+        public bool RegisterNewUser(User user)
         {
-            return this.user.GetAllUsers();
-        }
-
-        //public User GetUser(int id)
-        //{
-        //    return this.user.GetUser(id);
-        //}
-
-        public User LoginUser(string email, string password)
-        {
-            return this.user.LoginUser(email, password);
-        }
-
-        public bool RegisterNewUser(User usr)
-        {
-            user.RegisterNewUser(usr);
+            _user.RegisterNewUser(user);
             return true;
-        }
-
-        //public List<User> UpdateUser(int id, User user)
-        //{
-        //    return this.user.UpdateUser(id, user);
-        //}
+        }       
     }
 }
