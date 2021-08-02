@@ -13,6 +13,10 @@ namespace RepositoryLayer.Services
         {
 
         }
-        public DbSet<User> users { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
+        }
+        public DbSet<User> Users { get; set; }
     }
 }

@@ -54,18 +54,23 @@ namespace RepositoryLayer.Services
         }
 
         public bool RegisterNewUser(User user)
-        {            
-            user.Password = EncryptPassword(user.Password);
-            user.CreateDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-            user.ModifiedDate = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-            _db.users.Add(user);
-            _db.SaveChanges();
-            return true;
+        {
+            try
+            {
+                user.Password = EncryptPassword(user.Password);
+                _db.Users.Add(user);
+                _db.SaveChanges();
+                return true;
+            }            
+            catch(Exception)
+            {
+                throw new Exception("Email Already Registered!");
+            }
         }
 
         public LoginResponse LoginUser(string email, string password)
-        {
-            var authUser = _db.users.SingleOrDefault(x => x.Email == email && x.Password == password);
+        {            
+            var authUser = _db.Users.SingleOrDefault(x => x.Email == email && x.Password == password);
 
             if (authUser == null)
             {
@@ -94,6 +99,20 @@ namespace RepositoryLayer.Services
             loginResponse.LastName = authUser.LastName;
             loginResponse.Email = authUser.Email;
             return loginResponse;
-        }        
+        }
+
+        public bool ResetPassword(ResetPassword reset)
+        {
+            var user = _db.Users.SingleOrDefault(x => x.Email == reset.Email);
+
+            if(user != null)
+            {
+                user.Password = reset.NewPassword;
+                user.Password = reset.ConfirmPassword;                
+                _db.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }

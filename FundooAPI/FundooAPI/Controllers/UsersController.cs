@@ -19,17 +19,21 @@ namespace FundooAPI.Controllers
             this._users = user;
         }                
 
-        [HttpPost]
+        [HttpPost("Register")]
         public ActionResult PostUser(User user)
         {
-            if (_users.RegisterNewUser(user))
+            try
             {
-                return Ok(user);
+                _users.RegisterNewUser(user);
+                return Ok(new { success = true, message = "User Registered successfully", user.Email, user.FirstName, user.LastName });                
             }
-            return BadRequest();
+            catch(Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }                                    
         }               
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public ActionResult LoginUser(Login login)
         {
             var user = _users.LoginUser(login.Email, login.Password);
@@ -39,6 +43,18 @@ namespace FundooAPI.Controllers
                 return Ok(user);                                
             }
             return BadRequest(new { message = "Email or Password is incorrect" });
+        }
+
+        [HttpPut("reset")]
+        public ActionResult ResetPassword(ResetPassword reset)
+        {
+            var user = _users.ResetPassword(reset);
+
+            if(user == true)
+            {
+                return Ok(new { message = "Password reset successful", Data = reset.Email });
+            }
+            return BadRequest(new { message = "Email dosen't exist" });
         }
     }
 }

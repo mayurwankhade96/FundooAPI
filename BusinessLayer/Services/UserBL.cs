@@ -16,7 +16,12 @@ namespace BusinessLayer.Services
         public UserBL(IUserRL user)
         {
             this._user = user;
-        }        
+        }
+
+        public bool ResetPassword(ResetPassword reset)
+        {
+            return this._user.ResetPassword(reset);
+        }
 
         public LoginResponse LoginUser(string email, string password)
         {
@@ -25,8 +30,15 @@ namespace BusinessLayer.Services
 
         public bool RegisterNewUser(User user)
         {
-            _user.RegisterNewUser(user);
-            return true;
+            try
+            {
+                _user.RegisterNewUser(user);
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }       
     }
 }

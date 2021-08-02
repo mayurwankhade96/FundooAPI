@@ -8,6 +8,7 @@ namespace BusinessLayer.Interfaces
     public interface IUserBL
     {        
         bool RegisterNewUser(User user);        
-        LoginResponse LoginUser(string email, string password);        
+        LoginResponse LoginUser(string email, string password);
+        bool ResetPassword(ResetPassword reset);
     }
 }
