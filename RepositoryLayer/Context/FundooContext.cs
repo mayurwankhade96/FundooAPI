@@ -18,5 +18,6 @@ namespace RepositoryLayer.Services
             builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<NotesModel> Notes { get; set; }
     }
 }
