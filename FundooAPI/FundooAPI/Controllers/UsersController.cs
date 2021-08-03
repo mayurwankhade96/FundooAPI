@@ -1,5 +1,7 @@
 ﻿using BusinessLayer.Interfaces;
 using CommonLayer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -44,17 +46,33 @@ namespace FundooAPI.Controllers
             }
             return BadRequest(new { message = "Email or Password is incorrect" });
         }
-
-        [HttpPut("reset")]
+        
+        [HttpPut("resetpassword")]
         public ActionResult ResetPassword(ResetPassword reset)
         {
-            var user = _users.ResetPassword(reset);
-
-            if(user == true)
+            try
             {
+                _users.ResetPassword(reset);
                 return Ok(new { message = "Password reset successful", Data = reset.Email });
             }
-            return BadRequest(new { message = "Email dosen't exist" });
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("forgetpassword")]
+        public ActionResult ForgetPassword(string email)
+        {
+            try
+            {
+                _users.ForgetPassword(email);
+                return Ok(new { message = "Link has been sent to given email id..." });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ namespace BusinessLayer.Interfaces
     {        
         bool RegisterNewUser(User user);        
         LoginResponse LoginUser(string email, string password);
+        bool ForgetPassword(string email);
         bool ResetPassword(ResetPassword reset);
     }
 }

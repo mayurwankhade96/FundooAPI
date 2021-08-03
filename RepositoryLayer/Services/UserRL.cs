@@ -3,10 +3,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Interfaces;
+using RepositoryLayer.MSMQService;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 
@@ -69,7 +72,7 @@ namespace RepositoryLayer.Services
         }
 
         public LoginResponse LoginUser(string email, string password)
-        {            
+        {
             var authUser = _db.Users.SingleOrDefault(x => x.Email == email && x.Password == password);
 
             if (authUser == null)
@@ -99,20 +102,65 @@ namespace RepositoryLayer.Services
             loginResponse.LastName = authUser.LastName;
             loginResponse.Email = authUser.Email;
             return loginResponse;
-        }
+        }                
 
         public bool ResetPassword(ResetPassword reset)
         {
-            var user = _db.Users.SingleOrDefault(x => x.Email == reset.Email);
-
-            if(user != null)
+            try
             {
-                user.Password = reset.NewPassword;
-                user.Password = reset.ConfirmPassword;                
-                _db.SaveChanges();
-                return true;
+                string encryptedPassword = EncryptPassword(reset.NewPassword);
+                var user = _db.Users.SingleOrDefault(x => x.Email == reset.Email);
+
+                if (user != null)
+                {
+                    user.Password = encryptedPassword;
+                    _db.SaveChanges();
+                    return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception)
+            {
+                throw new Exception("Email not found!");
+            }
+        }
+
+        public bool ForgetPassword(string email)
+        {
+            try
+            {
+                string user;
+                string mailSubject = "Fundoo notes account password reset";
+                var userVerification = this._db.Users.SingleOrDefault(x => x.Email == email);
+
+                if (userVerification != null)
+                {
+                    MSMQUtility msmq = new MSMQUtility();
+                    msmq.SendMessage();
+
+                    var messageBody = msmq.ReceiveMessage();
+                    user = messageBody;
+                    using (MailMessage mailMessage = new MailMessage("mayur.wankhade2@gmail.com", email))
+                    {
+                        mailMessage.Subject = mailSubject;
+                        mailMessage.Body = user;
+                        mailMessage.IsBodyHtml = true;
+                        SmtpClient smtp = new SmtpClient();
+                        smtp.Host = "smtp.gmail.com";
+                        smtp.EnableSsl = true;
+                        smtp.UseDefaultCredentials = false;
+                        smtp.Credentials = new NetworkCredential("mayur.wankhade2@gmail.com", "khikhikhi");
+                        smtp.Port = 587;
+                        smtp.Send(mailMessage);
+                    }
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
