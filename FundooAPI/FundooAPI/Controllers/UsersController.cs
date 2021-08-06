@@ -62,11 +62,11 @@ namespace FundooAPI.Controllers
         }
 
         [HttpPost("forgetpassword")]
-        public ActionResult ForgetPassword(string email)
+        public ActionResult ForgetPassword([FromBody]FogetPassword fogetPassword)
         {
             try
             {
-                _users.ForgetPassword(email);
+                _users.ForgetPassword(fogetPassword.Email);
                 return Ok(new { message = "Link has been sent to given email id..." });
             }
             catch(Exception ex)

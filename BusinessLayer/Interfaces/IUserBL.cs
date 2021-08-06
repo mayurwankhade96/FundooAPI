@@ -11,5 +11,7 @@ namespace BusinessLayer.Interfaces
         LoginResponse LoginUser(string email, string password);
         bool ForgetPassword(string email);
         bool ResetPassword(ResetPassword reset);
+        string GenerateToken(string userEmail, int userId);
+        User GetUser(string email);
     }
 }

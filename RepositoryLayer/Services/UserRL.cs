@@ -78,31 +78,36 @@ namespace RepositoryLayer.Services
             if (authUser == null)
             {
                 return null;
-            }
+            }            
 
+            LoginResponse loginResponse = new LoginResponse();
+
+            loginResponse.Token = GenerateToken(authUser.Email, authUser.Id);
+            loginResponse.Id = authUser.Id;
+            loginResponse.FirstName = authUser.FirstName;
+            loginResponse.LastName = authUser.LastName;
+            loginResponse.Email = authUser.Email;
+            return loginResponse;
+        }
+        
+        public string GenerateToken(string userEmail, int userId)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Email, authUser.Email),
-                    new Claim("userId", authUser.Id.ToString(), ClaimValueTypes.Integer)
+                    new Claim(ClaimTypes.Email, userEmail),
+                    new Claim("userId", userId.ToString(), ClaimValueTypes.Integer)
                 }),
                 Expires = DateTime.UtcNow.AddDays(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            LoginResponse loginResponse = new LoginResponse();
-            
-            loginResponse.Token = tokenHandler.WriteToken(token);
-            loginResponse.Id = authUser.Id;
-            loginResponse.FirstName = authUser.FirstName;
-            loginResponse.LastName = authUser.LastName;
-            loginResponse.Email = authUser.Email;
-            return loginResponse;
-        }                
+            string jwtToken = tokenHandler.WriteToken(token);
+            return jwtToken;
+        }
 
         public bool ResetPassword(ResetPassword reset)
         {
@@ -130,29 +135,31 @@ namespace RepositoryLayer.Services
             try
             {
                 string user;
-                string mailSubject = "Fundoo notes account password reset";
-                var userVerification = this._db.Users.SingleOrDefault(x => x.Email == email);
+                //string mailSubject = "Fundoo notes account password reset";
+                //var userVerification = this._db.Users.SingleOrDefault(x => x.Email == email);
+                var usr = this._db.Users.SingleOrDefault(x => x.Email == email);
 
-                if (userVerification != null)
+                if (usr != null)
                 {
+                    string token = GenerateToken(usr.Email, usr.Id);
                     MSMQUtility msmq = new MSMQUtility();
-                    msmq.SendMessage();
+                    msmq.SendMessage(email, token);
 
-                    var messageBody = msmq.ReceiveMessage();
-                    user = messageBody;
-                    using (MailMessage mailMessage = new MailMessage("mayur.wankhade2@gmail.com", email))
-                    {
-                        mailMessage.Subject = mailSubject;
-                        mailMessage.Body = user;
-                        mailMessage.IsBodyHtml = true;
-                        SmtpClient smtp = new SmtpClient();
-                        smtp.Host = "smtp.gmail.com";
-                        smtp.EnableSsl = true;
-                        smtp.UseDefaultCredentials = false;
-                        smtp.Credentials = new NetworkCredential("mayur.wankhade2@gmail.com", "khikhikhi");
-                        smtp.Port = 587;
-                        smtp.Send(mailMessage);
-                    }
+                    //var messageBody = msmq.ReceiveMessage();
+                    //user = messageBody;
+                    //using (MailMessage mailMessage = new MailMessage("mayur.wankhade2@gmail.com", email))
+                    //{
+                    //    mailMessage.Subject = mailSubject;
+                    //    mailMessage.Body = user;
+                    //    mailMessage.IsBodyHtml = true;
+                    //    SmtpClient smtp = new SmtpClient();
+                    //    smtp.Host = "smtp.gmail.com";
+                    //    smtp.EnableSsl = true;
+                    //    smtp.UseDefaultCredentials = false;
+                    //    smtp.Credentials = new NetworkCredential("mayur.wankhade2@gmail.com", "khikhikhi");
+                    //    smtp.Port = 587;
+                    //    smtp.Send(mailMessage);
+                    //}
                     return true;
                 }
                 return false;
@@ -161,6 +168,17 @@ namespace RepositoryLayer.Services
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public User GetUser(string email)
+        {
+            var user = _db.Users.FirstOrDefault(x => x.Email == email);
+
+            if(user != null)
+            {
+                return user;
+            }
+            return null;
         }
     }
 }

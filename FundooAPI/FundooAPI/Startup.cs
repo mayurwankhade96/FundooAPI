@@ -62,8 +62,10 @@ namespace FundooAPI
                 };
             });
 
-            services.AddScoped<IUserBL, UserBL>();
-            services.AddScoped<IUserRL, UserRL>();            
+            services.AddTransient<IUserBL, UserBL>();
+            services.AddTransient<IUserRL, UserRL>();
+            services.AddTransient<INoteBL, NoteBL>();
+            services.AddTransient<INoteRL, NoteRL>();
 
             services.AddDbContext<FundooContext>
                 (options => options.UseSqlServer(Configuration["ConnectionString:FundooUsers"]));
