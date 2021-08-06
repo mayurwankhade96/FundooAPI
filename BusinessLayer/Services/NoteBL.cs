@@ -27,6 +27,18 @@ namespace BusinessLayer.Services
             }
         }
 
+        public bool DeleteNote(int noteId, int userId)
+        {
+            try
+            {
+                return _notes.DeleteNote(noteId, userId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public List<NotesModel> GetAllNotes(int userId)
         {
             try
@@ -63,6 +75,18 @@ namespace BusinessLayer.Services
             }
         }
 
+        public bool MoveToArchive(int noteId, int userId)
+        {
+            try
+            {
+                return this._notes.MoveToArchive(noteId, userId);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public bool MoveToBin(int noteId, int userId)
         {
             try
@@ -73,6 +97,30 @@ namespace BusinessLayer.Services
             {
                 throw;
             }
-        }        
+        }
+
+        public bool RestoreNote(int noteId, int userId)
+        {
+            try
+            {
+                return this._notes.RestoreNote(noteId, userId);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public bool UnarchiveNote(int noteId, int userId)
+        {
+            try
+            {
+                return this._notes.UnarchiveNote(noteId, userId);
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

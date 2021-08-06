@@ -127,5 +127,94 @@ namespace RepositoryLayer.Services
                 throw;
             }
         }
+
+        public bool MoveToArchive(int noteId, int userId)
+        {
+            try
+            {
+                var note = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId);
+
+                if (note != null)
+                {
+                    if (note.IsArchive == false)
+                    {
+                        note.IsArchive = true;
+                        _db.SaveChanges();
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool RestoreNote(int noteId, int userId)
+        {
+            try
+            {
+                var note = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId);
+
+                if (note != null)
+                {
+                    if (note.IsBin == true)
+                    {
+                        note.IsBin = false;
+                        _db.SaveChanges();
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool UnarchiveNote(int noteId, int userId)
+        {
+            try
+            {
+                var note = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId);
+
+                if (note != null)
+                {
+                    if (note.IsArchive == true)
+                    {
+                        note.IsArchive = false;
+                        _db.SaveChanges();
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool DeleteNote(int noteId, int userId)
+        {
+            try
+            {
+                var noteToBeRemoved = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId && x.IsBin == true);
+
+                if (noteToBeRemoved != null)
+                {
+                    _db.Notes.Remove(noteToBeRemoved);
+                    _db.SaveChanges();
+                    return true;                    
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -54,11 +54,11 @@ namespace FundooAPI.Controllers
             try
             {
                 int userId = GetIdFromToken();
-                var data = _notes.GetAllNotes(userId);
+                var notes = _notes.GetAllNotes(userId);
 
-                if(data != null)
+                if(notes != null)
                 {
-                    return Ok(new { message = "**Notes are as follows**", data = data });
+                    return Ok(new { message = "**Notes are as follows**", data = notes });
                 }
                 return BadRequest(new { message = "**Notes not available**" });
             }
@@ -74,11 +74,11 @@ namespace FundooAPI.Controllers
             try
             {
                 int userId = GetIdFromToken();
-                var data = _notes.GetArchiveNotes(userId);
+                var archiveNotes = _notes.GetArchiveNotes(userId);
 
-                if (data != null)
+                if (archiveNotes != null)
                 {
-                    return Ok(new { message = "**Archive notes are as follows**", data = data });
+                    return Ok(new { message = "**Archive notes are as follows**", data = archiveNotes });
                 }
                 return BadRequest(new { message = "**Archive notes not available**" });
             }
@@ -94,11 +94,11 @@ namespace FundooAPI.Controllers
             try
             {
                 int userId = GetIdFromToken();
-                var data = _notes.GetBinNotes(userId);
+                var trashNotes = _notes.GetBinNotes(userId);
 
-                if (data != null)
+                if (trashNotes != null)
                 {
-                    return Ok(new { message = "**Bin notes are as follows**", data = data });
+                    return Ok(new { message = "**Bin notes are as follows**", data = trashNotes });
                 }
                 return BadRequest(new { message = "**Bin notes not available**" });
             }
@@ -114,15 +114,95 @@ namespace FundooAPI.Controllers
             try
             {
                 int userId = GetIdFromToken();
-                var note = _notes.MoveToBin(noteId, userId);
+                var noteToBeMoved = _notes.MoveToBin(noteId, userId);
                 
-                if(note == true)
+                if(noteToBeMoved == true)
                 {
                     return Ok(new { message = "**Operation successfull**" });
                 }
                 return BadRequest(new { message = "operation unsuccessfull -_-" });
             }
             catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{noteId}/restore")]
+        public ActionResult RestoreNote(int noteId)
+        {
+            try
+            {
+                int userId = GetIdFromToken();
+                var noteToBeRestore = _notes.RestoreNote(noteId, userId);
+
+                if (noteToBeRestore == true)
+                {
+                    return Ok(new { message = "**Operation successfull**" });
+                }
+                return BadRequest(new { message = "operation unsuccessfull -_-" });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{noteId}/archive")]
+        public ActionResult MoveToArchive(int noteId)
+        {
+            try
+            {
+                int userId = GetIdFromToken();
+                var noteToBeArchived = _notes.MoveToArchive(noteId, userId);
+
+                if (noteToBeArchived == true)
+                {
+                    return Ok(new { message = "**Operation successfull**" });
+                }
+                return BadRequest(new { message = "operation unsuccessfull -_-" });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{noteId}/unarchive")]
+        public ActionResult UnarchiveNote(int noteId)
+        {
+            try
+            {
+                int userId = GetIdFromToken();
+                var noteToBeUnarchived = _notes.UnarchiveNote(noteId, userId);
+
+                if (noteToBeUnarchived == true)
+                {
+                    return Ok(new { message = "**Operation successfull**" });
+                }
+                return BadRequest(new { message = "operation unsuccessfull -_-" });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{noteId}")]
+        public ActionResult DeleteNote(int noteId)
+        {
+            try
+            {
+                int userId = GetIdFromToken();
+                var noteToBeDeleted = _notes.DeleteNote(noteId, userId);
+
+                if(noteToBeDeleted == true)
+                {
+                    return Ok(new { message = "**Note Deleted Successfully**" });
+                }
+                return BadRequest(new { message = "operation unsuccessfull -_-" });
+            }
+            catch(Exception ex)
             {
                 return NotFound(new { message = ex.Message });
             }
