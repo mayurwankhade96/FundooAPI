@@ -67,18 +67,18 @@ namespace RepositoryLayer.Services
             }            
             catch(Exception)
             {
-                throw new Exception("Email Already Registered!");
+                throw;
             }
         }
 
         public LoginResponse LoginUser(string email, string password)
-        {
+        {            
             var authUser = _db.Users.SingleOrDefault(x => x.Email == email && x.Password == password);
 
             if (authUser == null)
             {
                 return null;
-            }            
+            }
 
             LoginResponse loginResponse = new LoginResponse();
 
@@ -89,7 +89,7 @@ namespace RepositoryLayer.Services
             loginResponse.Email = authUser.Email;
             return loginResponse;
         }
-        
+
         public string GenerateToken(string userEmail, int userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -126,7 +126,7 @@ namespace RepositoryLayer.Services
             }
             catch (Exception)
             {
-                throw new Exception("Email not found!");
+                throw;
             }
         }
 
@@ -164,9 +164,9 @@ namespace RepositoryLayer.Services
                 }
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 

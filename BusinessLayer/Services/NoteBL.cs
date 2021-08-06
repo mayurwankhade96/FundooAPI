@@ -21,9 +21,9 @@ namespace BusinessLayer.Services
             {
                 return this._notes.CreateNewNote(notes, userId);
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
@@ -33,41 +33,41 @@ namespace BusinessLayer.Services
             {
                 return this._notes.GetAllNotes(userId);
             }
-            catch
+            catch(Exception)
             {
                 throw;
             }
         }
 
-        public List<NotesModel> GetArchiveNotes()
+        public List<NotesModel> GetArchiveNotes(int userId)
         {
             try
             {
-                return this._notes.GetArchiveNotes();
+                return this._notes.GetArchiveNotes(userId);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
-        public List<NotesModel> GetBinNotes()
+        public List<NotesModel> GetBinNotes(int userId)
         {
             try
             {
-                return this._notes.GetBinNotes();
+                return this._notes.GetBinNotes(userId);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
-        public bool InOutFromBin(int noteId)
+        public bool MoveToBin(int noteId, int userId)
         {
             try
             {
-                return this._notes.InOutFromBin(noteId);
+                return this._notes.MoveToBin(noteId, userId);
             }
             catch
             {

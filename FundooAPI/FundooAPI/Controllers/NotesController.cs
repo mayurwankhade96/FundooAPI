@@ -23,7 +23,7 @@ namespace FundooAPI.Controllers
         }
 
 
-        [HttpPost("create")]
+        [HttpPost]
         public ActionResult CreateNote(AddNote notes)
         {
             try
@@ -73,13 +73,14 @@ namespace FundooAPI.Controllers
         {
             try
             {
-                var data = _notes.GetArchiveNotes();
+                int userId = GetIdFromToken();
+                var data = _notes.GetArchiveNotes(userId);
 
                 if (data != null)
                 {
-                    return Ok(new { message = "**Notes are as follows**", data = data });
+                    return Ok(new { message = "**Archive notes are as follows**", data = data });
                 }
-                return BadRequest(new { message = "**Notes not available**" });
+                return BadRequest(new { message = "**Archive notes not available**" });
             }
             catch (Exception ex)
             {
@@ -87,18 +88,19 @@ namespace FundooAPI.Controllers
             }
         }
 
-        [HttpGet("bin")]
+        [HttpGet("trash")]
         public ActionResult GetBinNotes()
         {
             try
             {
-                var data = _notes.GetBinNotes();
+                int userId = GetIdFromToken();
+                var data = _notes.GetBinNotes(userId);
 
                 if (data != null)
                 {
-                    return Ok(new { message = "**Notes are as follows**", data = data });
+                    return Ok(new { message = "**Bin notes are as follows**", data = data });
                 }
-                return BadRequest(new { message = "**Notes not available**" });
+                return BadRequest(new { message = "**Bin notes not available**" });
             }
             catch (Exception ex)
             {
@@ -106,12 +108,13 @@ namespace FundooAPI.Controllers
             }
         }
 
-        [HttpPut("trash")]
+        [HttpPut("{noteId}/trash")]
         public ActionResult MoveToBin(int noteId)
         {
             try
             {
-                var note = _notes.InOutFromBin(noteId);
+                int userId = GetIdFromToken();
+                var note = _notes.MoveToBin(noteId, userId);
                 
                 if(note == true)
                 {

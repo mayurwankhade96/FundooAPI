@@ -45,9 +45,9 @@ namespace RepositoryLayer.Services
                 }
                 return false;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }        
 
@@ -69,11 +69,11 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public List<NotesModel> GetArchiveNotes()
+        public List<NotesModel> GetArchiveNotes(int userId)
         {
             try
             {
-                var notesOfLoggedInUser = _db.Notes.Where(x => x.IsArchive == true).ToList();
+                var notesOfLoggedInUser = _db.Notes.Where(x => x.IsArchive == true && x.Users.Id == userId).ToList();
 
                 if (notesOfLoggedInUser.Count != 0)
                 {
@@ -81,17 +81,17 @@ namespace RepositoryLayer.Services
                 }
                 return null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
-        public List<NotesModel> GetBinNotes()
+        public List<NotesModel> GetBinNotes(int userId)
         {
             try
             {
-                var notesOfLoggedInUser = _db.Notes.Where(x => x.IsBin == true).ToList();
+                var notesOfLoggedInUser = _db.Notes.Where(x => x.IsBin == true && x.Users.Id == userId).ToList();
 
                 if (notesOfLoggedInUser.Count != 0)
                 {
@@ -99,17 +99,17 @@ namespace RepositoryLayer.Services
                 }
                 return null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
 
-        public bool InOutFromBin(int noteId)
+        public bool MoveToBin(int noteId, int userId)
         {
             try
             {
-                var note = _db.Notes.FirstOrDefault(x => x.NoteId == noteId);
+                var note = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId);
 
                 if (note != null)
                 {
@@ -118,17 +118,11 @@ namespace RepositoryLayer.Services
                         note.IsBin = true;
                         _db.SaveChanges();
                         return true;
-                    }
-                    else
-                    {
-                        note.IsBin = false;
-                        _db.SaveChanges();
-                        return true;
-                    }
+                    }                    
                 }
                 return false;
             }
-            catch
+            catch(Exception)
             {
                 throw;
             }
