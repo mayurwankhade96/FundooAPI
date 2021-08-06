@@ -27,11 +27,23 @@ namespace BusinessLayer.Services
             }
         }
 
-        public List<NotesModel> GetAllNotes()
+        public List<NotesModel> GetAllNotes(int userId)
         {
             try
             {
-                return this._notes.GetAllNotes();
+                return this._notes.GetAllNotes(userId);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public List<NotesModel> GetArchiveNotes()
+        {
+            try
+            {
+                return this._notes.GetArchiveNotes();
             }
             catch (Exception ex)
             {
@@ -39,16 +51,28 @@ namespace BusinessLayer.Services
             }
         }
 
-        public List<NotesModel> GetNoteById(int noteId)
+        public List<NotesModel> GetBinNotes()
         {
             try
             {
-                return this._notes.GetNoteById(noteId);
+                return this._notes.GetBinNotes();
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
+
+        public bool InOutFromBin(int noteId)
+        {
+            try
+            {
+                return this._notes.InOutFromBin(noteId);
+            }
+            catch
+            {
+                throw;
+            }
+        }        
     }
 }

@@ -14,7 +14,7 @@ namespace CommonLayer
         public int NoteId { get; set; }
         public string Title { get; set; }
         public string WrittenNote { get; set; }
-        public DateTime Reminder { get; set; }
+        public DateTime? Reminder { get; set; }
         public string Collaborator { get; set; }
         public string Color { get; set; }
         public string Image { get; set; }

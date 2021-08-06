@@ -8,7 +8,9 @@ namespace BusinessLayer.Interfaces
     public interface INoteBL
     {
         bool CreateNewNote(AddNote notes, int userId);
-        List<NotesModel> GetAllNotes();
-        List<NotesModel> GetNoteById(int noteId);
+        List<NotesModel> GetAllNotes(int userId);
+        List<NotesModel> GetBinNotes();
+        List<NotesModel> GetArchiveNotes();
+        bool InOutFromBin(int noteId);
     }
 }

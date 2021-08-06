@@ -23,7 +23,7 @@ namespace FundooAPI.Controllers
         }
 
 
-        [HttpPost("createNote")]
+        [HttpPost("create")]
         public ActionResult CreateNote(AddNote notes)
         {
             try
@@ -53,8 +53,14 @@ namespace FundooAPI.Controllers
         {
             try
             {
-                var data = _notes.GetAllNotes();
-                return Ok(new { message = "**Notes are as follows**", data = data });
+                int userId = GetIdFromToken();
+                var data = _notes.GetAllNotes(userId);
+
+                if(data != null)
+                {
+                    return Ok(new { message = "**Notes are as follows**", data = data });
+                }
+                return BadRequest(new { message = "**Notes not available**" });
             }
             catch (Exception ex)
             {
@@ -62,13 +68,56 @@ namespace FundooAPI.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<IEnumerable<NotesModel>> GetNoteByNoteId(int noteId)
+        [HttpGet("archive")]
+        public ActionResult GetArchiveNotes()
         {
             try
             {
-                var isNoteFound = this._notes.GetNoteById(noteId);                                
-                return Ok(new { message = "**Here is your note**", data = isNoteFound });                                
+                var data = _notes.GetArchiveNotes();
+
+                if (data != null)
+                {
+                    return Ok(new { message = "**Notes are as follows**", data = data });
+                }
+                return BadRequest(new { message = "**Notes not available**" });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("bin")]
+        public ActionResult GetBinNotes()
+        {
+            try
+            {
+                var data = _notes.GetBinNotes();
+
+                if (data != null)
+                {
+                    return Ok(new { message = "**Notes are as follows**", data = data });
+                }
+                return BadRequest(new { message = "**Notes not available**" });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("trash")]
+        public ActionResult MoveToBin(int noteId)
+        {
+            try
+            {
+                var note = _notes.InOutFromBin(noteId);
+                
+                if(note == true)
+                {
+                    return Ok(new { message = "**Operation successfull**" });
+                }
+                return BadRequest(new { message = "operation unsuccessfull -_-" });
             }
             catch (Exception ex)
             {

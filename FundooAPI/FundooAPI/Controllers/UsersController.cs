@@ -21,7 +21,7 @@ namespace FundooAPI.Controllers
             this._users = user;
         }                
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public ActionResult PostUser(User user)
         {
             try
@@ -35,7 +35,7 @@ namespace FundooAPI.Controllers
             }                                    
         }               
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public ActionResult LoginUser(Login login)
         {
             var user = _users.LoginUser(login.Email, login.Password);
