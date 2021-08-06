@@ -49,7 +49,7 @@ namespace FundooAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<NotesModel>> GetAllNotes()
+        public ActionResult GetAllNotes()
         {
             try
             {

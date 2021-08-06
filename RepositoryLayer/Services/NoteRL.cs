@@ -57,7 +57,14 @@ namespace RepositoryLayer.Services
         {
             try
             {
-                return _db.Notes.ToList();
+                //return _db.Notes.ToList();
+                var notesOfLoggedInUser = _db.Notes.Where(x => x.IsArchive == false && x.IsBin == false).ToList();
+
+                if (notesOfLoggedInUser.Count != 0)
+                {
+                    return notesOfLoggedInUser;
+                }
+                return null;
             }
             catch (Exception ex)
             {
