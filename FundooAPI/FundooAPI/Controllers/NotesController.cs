@@ -68,6 +68,26 @@ namespace FundooAPI.Controllers
             }
         }
 
+        [HttpGet("{noteId}")]
+        public ActionResult GetNoteByNoteId(int noteId)
+        {
+            try
+            {
+                int userId = GetIdFromToken();
+                var note = _notes.GetNoteByNoteId(userId, noteId);
+
+                if (note != null)
+                {
+                    return Ok(new { message = "**Note is as following**", data = note });
+                }
+                return BadRequest(new { message = "**Note not available**" });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
         [HttpGet("archive")]
         public ActionResult GetArchiveNotes()
         {
@@ -199,6 +219,26 @@ namespace FundooAPI.Controllers
                 if(noteToBeDeleted == true)
                 {
                     return Ok(new { message = "**Note Deleted Successfully**" });
+                }
+                return BadRequest(new { message = "operation unsuccessfull -_-" });
+            }
+            catch(Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{noteId}/update")]
+        public ActionResult UpdateNote(UpdateNote update, int noteId)
+        {
+            try
+            {
+                int userId = GetIdFromToken();
+                var noteToBeUpdated = _notes.UpdateNote(update, noteId, userId);
+
+                if (noteToBeUpdated == true)
+                {
+                    return Ok(new { message = "**Note Updated Successfully**", data = update });
                 }
                 return BadRequest(new { message = "operation unsuccessfull -_-" });
             }

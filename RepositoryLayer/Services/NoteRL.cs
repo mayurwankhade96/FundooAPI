@@ -216,5 +216,45 @@ namespace RepositoryLayer.Services
                 throw;
             }
         }
+
+        public bool UpdateNote(UpdateNote update, int noteId, int userId)
+        {
+            try
+            {                
+                var noteToBeUpdated = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId);
+
+                noteToBeUpdated.Title = update.Title;
+                noteToBeUpdated.WrittenNote = update.WrittenNote;                
+
+                if (update.Title != null || update.WrittenNote != null)
+                {
+                    _db.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public List<NotesModel> GetNoteByNoteId(int userId, int noteId)
+        {
+            try
+            {
+                var note = _db.Notes.Where(x => x.IsArchive == false && x.IsBin == false && x.Users.Id == userId && x.NoteId == noteId).ToList();
+
+                if (note.Count != 0)
+                {
+                    return note;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

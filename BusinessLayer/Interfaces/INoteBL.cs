@@ -16,5 +16,7 @@ namespace BusinessLayer.Interfaces
         bool RestoreNote(int noteId, int userId);
         bool UnarchiveNote(int noteId, int userId);
         bool DeleteNote(int noteId, int userId);
+        bool UpdateNote(UpdateNote update, int noteId, int userId);
+        List<NotesModel> GetNoteByNoteId(int userId, int noteId);
     }
 }

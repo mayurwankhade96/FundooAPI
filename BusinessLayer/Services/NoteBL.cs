@@ -75,6 +75,18 @@ namespace BusinessLayer.Services
             }
         }
 
+        public List<NotesModel> GetNoteByNoteId(int userId, int noteId)
+        {
+            try
+            {
+                return this._notes.GetNoteByNoteId(userId, noteId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public bool MoveToArchive(int noteId, int userId)
         {
             try
@@ -116,6 +128,18 @@ namespace BusinessLayer.Services
             try
             {
                 return this._notes.UnarchiveNote(noteId, userId);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public bool UpdateNote(UpdateNote update, int noteId, int userId)
+        {
+            try
+            {
+                return this._notes.UpdateNote(update, noteId, userId);
             }
             catch
             {
