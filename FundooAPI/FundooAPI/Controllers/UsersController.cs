@@ -22,7 +22,7 @@ namespace FundooAPI.Controllers
         }                
 
         [HttpPost("register")]
-        public ActionResult PostUser(User user)
+        public ActionResult PostUser(RegisterUser user)
         {
             try
             {

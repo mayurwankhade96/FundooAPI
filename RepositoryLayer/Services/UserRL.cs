@@ -56,14 +56,26 @@ namespace RepositoryLayer.Services
             return result;
         }
 
-        public bool RegisterNewUser(User user)
+        public bool RegisterNewUser(RegisterUser user)
         {
             try
             {
-                user.Password = EncryptPassword(user.Password);
-                _db.Users.Add(user);
-                _db.SaveChanges();
-                return true;
+                User newUser = new User()
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Password = EncryptPassword(user.Password)
+                };
+
+                if(newUser != null)
+                {
+                    user.Password = EncryptPassword(user.Password);
+                    _db.Users.Add(newUser);
+                    _db.SaveChanges();
+                    return true;
+                }
+                return false;
             }            
             catch(Exception)
             {

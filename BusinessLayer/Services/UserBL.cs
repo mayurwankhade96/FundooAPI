@@ -39,7 +39,7 @@ namespace BusinessLayer.Services
             return this._user.LoginUser(email, password);
         }
 
-        public bool RegisterNewUser(User user)
+        public bool RegisterNewUser(RegisterUser user)
         {
             try
             {
@@ -61,29 +61,7 @@ namespace BusinessLayer.Services
             catch (Exception)
             {
                 throw;
-            }
-            //try
-            //{
-            //    string user;
-            //    string mailSubject = "Fundoo notes account password reset";
-            //    var userVerification = this._user.GetUser(email);
-            //    //var userVerification = _user.GetUser(email);
-
-            //    if (userVerification != null)
-            //    {
-            //        MSMQUtility msmq = new MSMQUtility();
-            //        string token = GenerateToken(userVerification.Email, userVerification.Id);
-            //        msmq.SendMessage(email, token);
-
-
-            //        return true;
-            //    }
-            //    return false;
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception(ex.Message);
-            //}
+            }            
         }
         
         public string GenerateToken(string userEmail, int userId)
