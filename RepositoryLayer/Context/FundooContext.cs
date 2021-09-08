@@ -1,4 +1,5 @@
 ﻿using CommonLayer;
+using CommonLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,5 +20,6 @@ namespace RepositoryLayer.Services
         }
         public DbSet<User> Users { get; set; }
         public DbSet<NotesModel> Notes { get; set; }
+        public DbSet<LabelModel> Labels { get; set; }
     }
 }

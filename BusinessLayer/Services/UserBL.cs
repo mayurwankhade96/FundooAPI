@@ -22,11 +22,11 @@ namespace BusinessLayer.Services
             this._secret = config.GetSection("AppSettings").GetSection("Key").Value;
         }                
 
-        public bool ResetPassword(ResetPassword reset)
+        public bool ResetPassword(ResetPassword reset, int userId)
         {
             try
             {
-                return this._user.ResetPassword(reset);
+                return this._user.ResetPassword(reset, userId);
             }
             catch (Exception)
             {

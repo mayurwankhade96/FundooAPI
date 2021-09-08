@@ -87,11 +87,11 @@ namespace BusinessLayer.Services
             }
         }
 
-        public bool MoveToArchive(int noteId, int userId)
+        public bool ArchiveUnarchiveNote(int noteId, int userId)
         {
             try
             {
-                return this._notes.MoveToArchive(noteId, userId);
+                return this._notes.ArchiveUnarchiveNote(noteId, userId);
             }
             catch
             {
@@ -99,41 +99,17 @@ namespace BusinessLayer.Services
             }
         }
 
-        public bool MoveToBin(int noteId, int userId)
+        public bool BinRestoreNote(int noteId, int userId)
         {
             try
             {
-                return this._notes.MoveToBin(noteId, userId);
+                return this._notes.BinRestoreNote(noteId, userId);
             }
             catch
             {
                 throw;
             }
-        }
-
-        public bool RestoreNote(int noteId, int userId)
-        {
-            try
-            {
-                return this._notes.RestoreNote(noteId, userId);
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public bool UnarchiveNote(int noteId, int userId)
-        {
-            try
-            {
-                return this._notes.UnarchiveNote(noteId, userId);
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        }        
 
         public bool UpdateNote(UpdateNote update, int noteId, int userId)
         {
@@ -142,6 +118,30 @@ namespace BusinessLayer.Services
                 return this._notes.UpdateNote(update, noteId, userId);
             }
             catch
+            {
+                throw;
+            }
+        }
+
+        public bool PinUnpinNote(int noteId, int userId)
+        {
+            try
+            {
+                return this._notes.PinUnpinNote(noteId, userId);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public bool AddColor(int noteId, string color, int userId)
+        {
+            try
+            {
+                return this._notes.AddColor(noteId, color, userId);
+            }
+            catch (Exception)
             {
                 throw;
             }

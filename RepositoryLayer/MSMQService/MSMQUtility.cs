@@ -59,7 +59,7 @@ namespace RepositoryLayer.MSMQService
             message.Formatter = new BinaryMessageFormatter();
             string token = message.Body.ToString();
             string email = UserDataFromToken(token);
-            var url = $"Link to reset your password : https://localhost:44359/api/users/resetpassword/{token}";
+            var url = $"Link to reset your password : http://localhost:4200/reset/{token}";
             //var messageBody = msmq.ReceiveMessage();
             //user = messageBody;
             using (MailMessage mailMessage = new MailMessage("mayur.wankhade2@gmail.com", email))
@@ -72,7 +72,7 @@ namespace RepositoryLayer.MSMQService
                 smtp.Host = "smtp.gmail.com";
                 smtp.EnableSsl = true;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("mayur.wankhade2@gmail.com", "khikhikhi");
+                smtp.Credentials = new NetworkCredential("mayur.wankhade2@gmail.com", "khikhikhikhi");
                 smtp.Port = 587;
                 smtp.Send(mailMessage);
             }

@@ -121,12 +121,12 @@ namespace RepositoryLayer.Services
             return jwtToken;
         }
 
-        public bool ResetPassword(ResetPassword reset)
+        public bool ResetPassword(ResetPassword reset, int userId)
         {
             try
             {
                 string encryptedPassword = EncryptPassword(reset.NewPassword);
-                var user = _db.Users.SingleOrDefault(x => x.Email == reset.Email);
+                var user = _db.Users.SingleOrDefault(x => x.Id == userId);
 
                 if (user != null)
                 {

@@ -1,4 +1,5 @@
 ﻿using CommonLayer;
+using Microsoft.EntityFrameworkCore;
 using RepositoryLayer.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -73,7 +74,7 @@ namespace RepositoryLayer.Services
         {
             try
             {
-                var notesOfLoggedInUser = _db.Notes.Where(x => x.IsArchive == true && x.Users.Id == userId).ToList();
+                var notesOfLoggedInUser = _db.Notes.Where(x => x.IsArchive == true && x.Users.Id == userId && x.IsBin == false).ToList();
 
                 if (notesOfLoggedInUser.Count != 0)
                 {
@@ -105,7 +106,7 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public bool MoveToBin(int noteId, int userId)
+        public bool BinRestoreNote(int noteId, int userId)
         {
             try
             {
@@ -115,10 +116,16 @@ namespace RepositoryLayer.Services
                 {
                     if (note.IsBin == false)
                     {
-                        note.IsBin = true;
+                        note.IsBin = true;                        
                         _db.SaveChanges();
                         return true;
-                    }                    
+                    }
+                    else 
+                    {
+                        note.IsBin = false;
+                        _db.SaveChanges();
+                        return true;                        
+                    }                                        
                 }
                 return false;
             }
@@ -128,7 +135,7 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public bool MoveToArchive(int noteId, int userId)
+        public bool ArchiveUnarchiveNote(int noteId, int userId)
         {
             try
             {
@@ -142,47 +149,7 @@ namespace RepositoryLayer.Services
                         _db.SaveChanges();
                         return true;
                     }
-                }
-                return false;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public bool RestoreNote(int noteId, int userId)
-        {
-            try
-            {
-                var note = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId);
-
-                if (note != null)
-                {
-                    if (note.IsBin == true)
-                    {
-                        note.IsBin = false;
-                        _db.SaveChanges();
-                        return true;
-                    }
-                }
-                return false;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public bool UnarchiveNote(int noteId, int userId)
-        {
-            try
-            {
-                var note = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId);
-
-                if (note != null)
-                {
-                    if (note.IsArchive == true)
+                    else
                     {
                         note.IsArchive = false;
                         _db.SaveChanges();
@@ -195,7 +162,7 @@ namespace RepositoryLayer.Services
             {
                 throw;
             }
-        }
+        }                        
 
         public bool DeleteNote(int noteId, int userId)
         {
@@ -221,7 +188,7 @@ namespace RepositoryLayer.Services
         {
             try
             {                
-                var noteToBeUpdated = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId);
+                var noteToBeUpdated = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId && x.IsBin == false);
 
                 noteToBeUpdated.Title = update.Title;
                 noteToBeUpdated.WrittenNote = update.WrittenNote;                
@@ -250,6 +217,59 @@ namespace RepositoryLayer.Services
                     return note;
                 }
                 return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool PinUnpinNote(int noteId, int userId)
+        {
+            try
+            {
+                var note = _db.Notes.FirstOrDefault(x => x.NoteId == noteId && x.Users.Id == userId);
+
+                if (note != null)
+                {
+                    if (note.IsPin == false)
+                    {
+                        note.IsPin = true;
+                        _db.SaveChanges();
+                        return true;
+                    }
+                    else
+                    {
+                        note.IsPin = false;
+                        _db.SaveChanges();
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool AddColor(int noteId, string color, int userId)
+        {
+            try
+            {
+                var note = _db.Notes.SingleOrDefault(x => x.NoteId == noteId && x.IsBin == false);
+
+                if(note != null)
+                {
+                    note.Color = color;
+                    _db.Entry(note).State = EntityState.Modified;
+                    _db.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception)
             {

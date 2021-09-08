@@ -2,6 +2,7 @@
 using CommonLayer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,8 +12,9 @@ using System.Threading.Tasks;
 
 namespace FundooAPI.Controllers
 {
+    [EnableCors()]
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController] 
     public class UsersController : ControllerBase
     {
         private IUserBL _users;
@@ -46,14 +48,21 @@ namespace FundooAPI.Controllers
             }
             return BadRequest(new { message = "Email or Password is incorrect" });
         }
-        
+
+        private int GetIdFromToken()
+        {
+            return Convert.ToInt32(User.FindFirst(x => x.Type == "userId").Value);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("resetpassword")]
         public ActionResult ResetPassword(ResetPassword reset)
         {
             try
             {
-                _users.ResetPassword(reset);
-                return Ok(new { message = "Password reset successful", Data = reset.Email });
+                int userId = GetIdFromToken();
+                _users.ResetPassword(reset, userId);
+                return Ok(new { message = "Password reset successful" });
             }
             catch(Exception ex)
             {
